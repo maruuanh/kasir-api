@@ -11,21 +11,6 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
-func enableCORS(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-
-		if r.Method == "OPTIONS" {
-			w.WriteHeader(http.StatusOK)
-			return
-		}
-
-		next.ServeHTTP(w, r)
-	})
-}
-
 func main() {
 	// @title Kasir API
 	// @version 1.0
@@ -63,7 +48,7 @@ func main() {
 	fmt.Println("Server running di localhost:8080")
 
 	// Jalankan server di port 8080
-	err := http.ListenAndServe(":8080", enableCORS(http.DefaultServeMux))
+	err := http.ListenAndServe(":8080", nil)
 
 	// Tangani error jika server gagal dijalankan
 	if err != nil {
