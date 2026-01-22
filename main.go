@@ -63,7 +63,7 @@ func main() {
 	fmt.Println("Server running di localhost:8080")
 
 	// Jalankan server di port 8080
-	err := http.ListenAndServe(":8080", enableCORS(http.NewServeMux()))
+	err := http.ListenAndServe(":8080", enableCORS(http.DefaultServeMux))
 
 	// Tangani error jika server gagal dijalankan
 	if err != nil {
