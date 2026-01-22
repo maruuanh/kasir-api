@@ -188,7 +188,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
 	BasePath:         "",
-	Schemes:          []string{"http", "https"},
+	Schemes:          []string{"https"},
 	Title:            "Kasir API",
 	Description:      "API sederhana untuk manajemen produk di kasir",
 	InfoInstanceName: "swagger",

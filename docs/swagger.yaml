@@ -113,6 +113,5 @@ paths:
             type: string
       summary: Update Produk by ID
 schemes:
-- http
 - https
 swagger: "2.0"

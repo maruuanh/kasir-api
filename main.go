@@ -15,7 +15,7 @@ func main() {
 	// @title Kasir API
 	// @version 1.0
 	// @description API sederhana untuk manajemen produk di kasir
-	// @schemes http https
+	// @schemes https
 
 	var produk = models.DataProduk
 
