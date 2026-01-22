@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// GET localhost:8080/api/produk/{id}
+// GET /api/produk/{id}
 // @Summary Get Produk by ID
 // @Description Mengambil data produk berdasarkan ID
 // @Param id path int true "Produk ID"
@@ -33,7 +33,7 @@ func GetProdukByID(w http.ResponseWriter, idStr string, produk []models.Produk) 
 	http.Error(w, "Produk tidak ditemukan", http.StatusNotFound)
 }
 
-// PUT localhost:8080/api/produk/{id}
+// PUT /api/produk/{id}
 // @Summary Update Produk by ID
 // @Description Memperbarui data produk berdasarkan ID
 // @Param id path int true "Produk ID"
@@ -72,7 +72,7 @@ func UpdateProduk(w http.ResponseWriter, r *http.Request, produk *[]models.Produ
 	}
 }
 
-// DELETE localhost:8080/api/produk/{id}
+// DELETE /api/produk/{id}
 // @Summary Delete Produk by ID
 // @Description Menghapus data produk berdasarkan ID
 // @Param id path int true "Produk ID"
@@ -102,7 +102,7 @@ func DeleteProduk(w http.ResponseWriter, r *http.Request, produk *[]models.Produ
 	// bikin slice baru dengan data sebelum dan sesudah index
 }
 
-// POST localhost:8080/api/produk/
+// POST /api/produk/
 // @Summary Create new Produk
 // @Description Menambahkan data produk baru
 // @Param produk body models.Produk true "New Produk Data"
@@ -124,7 +124,7 @@ func PostProduk(w http.ResponseWriter, r *http.Request, produk *[]models.Produk)
 	json.NewEncoder(w).Encode(produkBaru)
 }
 
-// GET localhost:8080/api/produk
+// GET /api/produk
 // @Summary Get all Produk
 // @Description Mengambil semua data produk
 // @Success 200 {array} models.Produk

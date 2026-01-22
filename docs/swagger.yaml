@@ -1,4 +1,3 @@
-basePath: /
 definitions:
   models.Produk:
     properties:
@@ -11,7 +10,6 @@ definitions:
       stok:
         type: integer
     type: object
-host: localhost:8080
 info:
   contact: {}
   description: API sederhana untuk manajemen produk di kasir
@@ -116,4 +114,5 @@ paths:
       summary: Update Produk by ID
 schemes:
 - http
+- https
 swagger: "2.0"
