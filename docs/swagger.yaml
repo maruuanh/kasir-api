@@ -112,6 +112,4 @@ paths:
           schema:
             type: string
       summary: Update Produk by ID
-schemes:
-- https
 swagger: "2.0"
