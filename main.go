@@ -20,7 +20,7 @@ func main() {
 	// @schemes http
 
 	var produk = models.DataProduk
-	http.Handle("/swagger/", httpSwagger.WrapHandler)
+
 	http.HandleFunc("/api/produk/", func(w http.ResponseWriter, r *http.Request) {
 
 		switch r.Method {
@@ -41,6 +41,10 @@ func main() {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	})
+
+	http.Handle("/swagger/", httpSwagger.WrapHandler)
+
+	http.Handle("/", http.RedirectHandler("/swagger/index.html", http.StatusMovedPermanently))
 
 	fmt.Println("Server running di localhost:8080")
 
