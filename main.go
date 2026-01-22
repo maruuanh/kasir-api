@@ -11,6 +11,22 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+func enableCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Izinkan semua domain (untuk development/testing)
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	// @title Kasir API
 	// @version 1.0
@@ -18,8 +34,8 @@ func main() {
 	// @schemes http https
 
 	var produk = models.DataProduk
-
-	http.HandleFunc("/api/produk/", func(w http.ResponseWriter, r *http.Request) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/api/produk/", func(w http.ResponseWriter, r *http.Request) {
 
 		switch r.Method {
 		case "GET":
@@ -40,14 +56,22 @@ func main() {
 		}
 	})
 
-	http.Handle("/swagger/", httpSwagger.WrapHandler)
+	mux.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 
-	http.Handle("/", http.RedirectHandler("/swagger/index.html", http.StatusMovedPermanently))
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// Jika user buka alamat utama (misal: myapp.up.railway.app/)
+		if r.URL.Path == "/" {
+			http.Redirect(w, r, "/swagger/index.html", http.StatusMovedPermanently)
+			return
+		}
+		// Jika path tidak dikenal, kasih 404
+		http.NotFound(w, r)
+	})
 
 	fmt.Println("Server running di localhost:8080")
 
 	// Jalankan server di port 8080
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8080", enableCORS(mux))
 
 	// Tangani error jika server gagal dijalankan
 	if err != nil {
