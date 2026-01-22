@@ -1,0 +1,17 @@
+# Hasil kompilasi
+main
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Password & Token Rahasia
+.env
+
+# Folder dari Editor/IDE
+.vscode/
+.idea/
+
+# File log
+*.log

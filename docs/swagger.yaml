@@ -1,0 +1,119 @@
+basePath: /
+definitions:
+  models.Produk:
+    properties:
+      harga:
+        type: integer
+      id:
+        type: integer
+      nama:
+        type: string
+      stok:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API sederhana untuk manajemen produk di kasir
+  title: Kasir API
+  version: "1.0"
+paths:
+  /api/produk:
+    get:
+      description: Mengambil semua data produk
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Produk'
+            type: array
+      summary: Get all Produk
+  /api/produk/:
+    post:
+      description: Menambahkan data produk baru
+      parameters:
+      - description: New Produk Data
+        in: body
+        name: produk
+        required: true
+        schema:
+          $ref: '#/definitions/models.Produk'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Produk'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: Create new Produk
+  /api/produk/{id}:
+    delete:
+      description: Menghapus data produk berdasarkan ID
+      parameters:
+      - description: Produk ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Produk berhasil dihapus
+          schema:
+            type: string
+        "400":
+          description: Invalid Produk ID
+          schema:
+            type: string
+      summary: Delete Produk by ID
+    get:
+      description: Mengambil data produk berdasarkan ID
+      parameters:
+      - description: Produk ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Produk'
+        "400":
+          description: Invalid Produk ID
+          schema:
+            type: string
+        "404":
+          description: Produk tidak ditemukan
+          schema:
+            type: string
+      summary: Get Produk by ID
+    put:
+      description: Memperbarui data produk berdasarkan ID
+      parameters:
+      - description: Produk ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated Produk Data
+        in: body
+        name: produk
+        required: true
+        schema:
+          $ref: '#/definitions/models.Produk'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Produk'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: Update Produk by ID
+schemes:
+- http
+swagger: "2.0"
