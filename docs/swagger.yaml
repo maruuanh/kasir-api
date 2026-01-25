@@ -1,5 +1,5 @@
 definitions:
-  models.Produk:
+  models.Categories:
     properties:
       harga:
         type: integer
@@ -12,64 +12,64 @@ definitions:
     type: object
 info:
   contact: {}
-  description: API sederhana untuk manajemen produk di kasir
+  description: API sederhana untuk manajemen categories di kasir
   title: Kasir API
   version: "1.0"
 paths:
-  /api/produk:
+  /api/categories:
     get:
-      description: Mengambil semua data produk
+      description: Mengambil semua data categories
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Produk'
+              $ref: '#/definitions/models.Categories'
             type: array
-      summary: Get all Produk
-  /api/produk/:
+      summary: Get all Categories
+  /api/categories/:
     post:
-      description: Menambahkan data produk baru
+      description: Menambahkan data categories baru
       parameters:
-      - description: New Produk Data
+      - description: New Categories Data
         in: body
-        name: produk
+        name: categories
         required: true
         schema:
-          $ref: '#/definitions/models.Produk'
+          $ref: '#/definitions/models.Categories'
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Produk'
+            $ref: '#/definitions/models.Categories'
         "400":
           description: Invalid request
           schema:
             type: string
-      summary: Create new Produk
-  /api/produk/{id}:
+      summary: Create new Categories
+  /api/categories/{id}:
     delete:
-      description: Menghapus data produk berdasarkan ID
+      description: Menghapus data categories berdasarkan ID
       parameters:
-      - description: Produk ID
+      - description: Categories ID
         in: path
         name: id
         required: true
         type: integer
       responses:
         "200":
-          description: Produk berhasil dihapus
+          description: Categories berhasil dihapus
           schema:
             type: string
         "400":
-          description: Invalid Produk ID
+          description: Invalid Categories ID
           schema:
             type: string
-      summary: Delete Produk by ID
+      summary: Delete Categories by ID
     get:
-      description: Mengambil data produk berdasarkan ID
+      description: Mengambil data categories berdasarkan ID
       parameters:
-      - description: Produk ID
+      - description: Categories ID
         in: path
         name: id
         required: true
@@ -78,38 +78,38 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Produk'
+            $ref: '#/definitions/models.Categories'
         "400":
-          description: Invalid Produk ID
+          description: Invalid Categories ID
           schema:
             type: string
         "404":
-          description: Produk tidak ditemukan
+          description: Categories tidak ditemukan
           schema:
             type: string
-      summary: Get Produk by ID
+      summary: Get Categories by ID
     put:
-      description: Memperbarui data produk berdasarkan ID
+      description: Memperbarui data categories berdasarkan ID
       parameters:
-      - description: Produk ID
+      - description: Categories ID
         in: path
         name: id
         required: true
         type: integer
-      - description: Updated Produk Data
+      - description: Updated Categories Data
         in: body
-        name: produk
+        name: categories
         required: true
         schema:
-          $ref: '#/definitions/models.Produk'
+          $ref: '#/definitions/models.Categories'
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Produk'
+            $ref: '#/definitions/models.Categories'
         "400":
           description: Invalid request
           schema:
             type: string
-      summary: Update Produk by ID
+      summary: Update Categories by ID
 swagger: "2.0"

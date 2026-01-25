@@ -15,35 +15,35 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/produk": {
+        "/api/categories": {
             "get": {
-                "description": "Mengambil semua data produk",
-                "summary": "Get all Produk",
+                "description": "Mengambil semua data categories",
+                "summary": "Get all Categories",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Produk"
+                                "$ref": "#/definitions/models.Categories"
                             }
                         }
                     }
                 }
             }
         },
-        "/api/produk/": {
+        "/api/categories/": {
             "post": {
-                "description": "Menambahkan data produk baru",
-                "summary": "Create new Produk",
+                "description": "Menambahkan data categories baru",
+                "summary": "Create new Categories",
                 "parameters": [
                     {
-                        "description": "New Produk Data",
-                        "name": "produk",
+                        "description": "New Categories Data",
+                        "name": "categories",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Produk"
+                            "$ref": "#/definitions/models.Categories"
                         }
                     }
                 ],
@@ -51,7 +51,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.Produk"
+                            "$ref": "#/definitions/models.Categories"
                         }
                     },
                     "400": {
@@ -63,14 +63,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/produk/{id}": {
+        "/api/categories/{id}": {
             "get": {
-                "description": "Mengambil data produk berdasarkan ID",
-                "summary": "Get Produk by ID",
+                "description": "Mengambil data categories berdasarkan ID",
+                "summary": "Get Categories by ID",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Produk ID",
+                        "description": "Categories ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -80,17 +80,17 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Produk"
+                            "$ref": "#/definitions/models.Categories"
                         }
                     },
                     "400": {
-                        "description": "Invalid Produk ID",
+                        "description": "Invalid Categories ID",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "404": {
-                        "description": "Produk tidak ditemukan",
+                        "description": "Categories tidak ditemukan",
                         "schema": {
                             "type": "string"
                         }
@@ -98,23 +98,23 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Memperbarui data produk berdasarkan ID",
-                "summary": "Update Produk by ID",
+                "description": "Memperbarui data categories berdasarkan ID",
+                "summary": "Update Categories by ID",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Produk ID",
+                        "description": "Categories ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Updated Produk Data",
-                        "name": "produk",
+                        "description": "Updated Categories Data",
+                        "name": "categories",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Produk"
+                            "$ref": "#/definitions/models.Categories"
                         }
                     }
                 ],
@@ -122,7 +122,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Produk"
+                            "$ref": "#/definitions/models.Categories"
                         }
                     },
                     "400": {
@@ -134,12 +134,12 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Menghapus data produk berdasarkan ID",
-                "summary": "Delete Produk by ID",
+                "description": "Menghapus data categories berdasarkan ID",
+                "summary": "Delete Categories by ID",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Produk ID",
+                        "description": "Categories ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -147,13 +147,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Produk berhasil dihapus",
+                        "description": "Categories berhasil dihapus",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "400": {
-                        "description": "Invalid Produk ID",
+                        "description": "Invalid Categories ID",
                         "schema": {
                             "type": "string"
                         }
@@ -163,7 +163,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.Produk": {
+        "models.Categories": {
             "type": "object",
             "properties": {
                 "harga": {
@@ -190,7 +190,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Kasir API",
-	Description:      "API sederhana untuk manajemen produk di kasir",
+	Description:      "API sederhana untuk manajemen categories di kasir",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
