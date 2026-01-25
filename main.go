@@ -14,26 +14,26 @@ import (
 func main() {
 	// @title Kasir API
 	// @version 1.0
-	// @description API sederhana untuk manajemen produk di kasir
+	// @description API sederhana untuk manajemen categories di kasir
 
-	var produk = models.DataProduk
+	var categories = models.DataCategories
 
-	http.HandleFunc("/api/produk/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/categories/", func(w http.ResponseWriter, r *http.Request) {
 
 		switch r.Method {
 		case "GET":
-			idStr := strings.TrimPrefix(r.URL.Path, "/api/produk/")
+			idStr := strings.TrimPrefix(r.URL.Path, "/api/categories/")
 			if idStr == "" {
-				handler.GetAllProduk(w, produk)
+				handler.GetAllCategories(w, categories)
 			} else {
-				handler.GetProdukByID(w, idStr, produk)
+				handler.GetCategoriesByID(w, idStr, categories)
 			}
 		case "POST":
-			handler.PostProduk(w, r, &produk)
+			handler.PostCategories(w, r, &categories)
 		case "PUT":
-			handler.UpdateProduk(w, r, &produk)
+			handler.UpdateCategories(w, r, &categories)
 		case "DELETE":
-			handler.DeleteProduk(w, r, &produk)
+			handler.DeleteCategories(w, r, &categories)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
