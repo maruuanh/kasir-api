@@ -15,10 +15,16 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/categories": {
+        "/api/kategori": {
             "get": {
-                "description": "Mengambil semua data categories",
-                "summary": "Get all Categories",
+                "description": "Mengambil semua data kategori produk (Challange (Optional))",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get All Categories",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -28,22 +34,70 @@ const docTemplate = `{
                                 "$ref": "#/definitions/models.Categories"
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Failed to get categories",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }
         },
-        "/api/categories/": {
-            "post": {
-                "description": "Menambahkan data categories baru",
-                "summary": "Create new Categories",
+        "/api/produk": {
+            "get": {
+                "description": "Mengambil semua data produk. Terdapat opsi untuk mendapatkan detail kategori produk",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get All Products",
                 "parameters": [
                     {
-                        "description": "New Categories Data",
-                        "name": "categories",
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Tampilkan Detail Kategori Produk",
+                        "name": "details",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Product"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to get products",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Menambahkan data produk baru, data yang perlu diisi: { category_id, name, price, stock }",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create New Product",
+                "parameters": [
+                    {
+                        "description": "New Product Data",
+                        "name": "product",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Categories"
+                            "$ref": "#/definitions/models.Product"
                         }
                     }
                 ],
@@ -51,11 +105,17 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.Categories"
+                            "$ref": "#/definitions/models.Product"
                         }
                     },
                     "400": {
-                        "description": "Invalid request",
+                        "description": "Invalid request body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to create product",
                         "schema": {
                             "type": "string"
                         }
@@ -63,34 +123,47 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/categories/{id}": {
+        "/api/produk/{id}": {
             "get": {
-                "description": "Mengambil data categories berdasarkan ID",
-                "summary": "Get Categories by ID",
+                "description": "Mengambil data produk berdasarkan ID. Terdapat opsi untuk mendapatkan detail kategori produk",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get Product by ID",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Categories ID",
+                        "description": "Product ID",
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Tampilkan Detail Kategori Produk",
+                        "name": "details",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Categories"
+                            "$ref": "#/definitions/models.Product"
                         }
                     },
                     "400": {
-                        "description": "Invalid Categories ID",
+                        "description": "Invalid product ID",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "404": {
-                        "description": "Categories tidak ditemukan",
+                        "description": "Product not found",
                         "schema": {
                             "type": "string"
                         }
@@ -98,23 +171,29 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Memperbarui data categories berdasarkan ID",
-                "summary": "Update Categories by ID",
+                "description": "Memperbarui data produk berdasarkan ID, data yang dapat diubah: { category_id, name, price, stock }",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Update Product by ID",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Categories ID",
+                        "description": "Product ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Updated Categories Data",
-                        "name": "categories",
+                        "description": "Updated Product Data",
+                        "name": "product",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Categories"
+                            "$ref": "#/definitions/models.Product"
                         }
                     }
                 ],
@@ -122,11 +201,17 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Categories"
+                            "$ref": "#/definitions/models.Product"
                         }
                     },
                     "400": {
-                        "description": "Invalid request",
+                        "description": "Invalid request body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to update product",
                         "schema": {
                             "type": "string"
                         }
@@ -134,12 +219,12 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Menghapus data categories berdasarkan ID",
-                "summary": "Delete Categories by ID",
+                "description": "Menghapus data produk berdasarkan ID",
+                "summary": "Delete Product by ID",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Categories ID",
+                        "description": "Product ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -147,13 +232,22 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Categories berhasil dihapus",
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid product ID",
                         "schema": {
                             "type": "string"
                         }
                     },
-                    "400": {
-                        "description": "Invalid Categories ID",
+                    "500": {
+                        "description": "Failed to delete product",
                         "schema": {
                             "type": "string"
                         }
@@ -166,16 +260,33 @@ const docTemplate = `{
         "models.Categories": {
             "type": "object",
             "properties": {
-                "harga": {
+                "id": {
                     "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Product": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "type": "integer"
+                },
+                "category_name": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
-                "nama": {
+                "name": {
                     "type": "string"
                 },
-                "stok": {
+                "price": {
+                    "type": "number"
+                },
+                "stock": {
                     "type": "integer"
                 }
             }
@@ -185,12 +296,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
+	Version:          "1.0.1",
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Kasir API",
-	Description:      "API sederhana untuk manajemen categories di kasir",
+	Description:      "API untuk aplikasi manajemen kasir yang di-update dengan menggunakan database PostgreSQL. Terdapat penambahan endpoint untuk mengelola kategori produk serta relasi antara produk dan kategori.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

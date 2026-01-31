@@ -1,24 +1,41 @@
 definitions:
   models.Categories:
     properties:
-      harga:
-        type: integer
       id:
         type: integer
-      nama:
+      name:
         type: string
-      stok:
+    type: object
+  models.Product:
+    properties:
+      category_id:
+        type: integer
+      category_name:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      stock:
         type: integer
     type: object
 info:
   contact: {}
-  description: API sederhana untuk manajemen categories di kasir
+  description: API untuk aplikasi manajemen kasir yang di-update dengan menggunakan
+    database PostgreSQL. Terdapat penambahan endpoint untuk mengelola kategori produk
+    serta relasi antara produk dan kategori.
   title: Kasir API
-  version: "1.0"
+  version: 1.0.1
 paths:
-  /api/categories:
+  /api/kategori:
     get:
-      description: Mengambil semua data categories
+      consumes:
+      - application/json
+      description: Mengambil semua data kategori produk (Challange (Optional))
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
@@ -26,50 +43,70 @@ paths:
             items:
               $ref: '#/definitions/models.Categories'
             type: array
-      summary: Get all Categories
-  /api/categories/:
-    post:
-      description: Menambahkan data categories baru
+        "500":
+          description: Failed to get categories
+          schema:
+            type: string
+      summary: Get All Categories
+  /api/produk:
+    get:
+      consumes:
+      - application/json
+      description: Mengambil semua data produk. Terdapat opsi untuk mendapatkan detail
+        kategori produk
       parameters:
-      - description: New Categories Data
+      - default: false
+        description: Tampilkan Detail Kategori Produk
+        in: query
+        name: details
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Product'
+            type: array
+        "500":
+          description: Failed to get products
+          schema:
+            type: string
+      summary: Get All Products
+    post:
+      consumes:
+      - application/json
+      description: 'Menambahkan data produk baru, data yang perlu diisi: { category_id,
+        name, price, stock }'
+      parameters:
+      - description: New Product Data
         in: body
-        name: categories
+        name: product
         required: true
         schema:
-          $ref: '#/definitions/models.Categories'
+          $ref: '#/definitions/models.Product'
+      produces:
+      - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Categories'
+            $ref: '#/definitions/models.Product'
         "400":
-          description: Invalid request
+          description: Invalid request body
           schema:
             type: string
-      summary: Create new Categories
-  /api/categories/{id}:
+        "500":
+          description: Failed to create product
+          schema:
+            type: string
+      summary: Create New Product
+  /api/produk/{id}:
     delete:
-      description: Menghapus data categories berdasarkan ID
+      description: Menghapus data produk berdasarkan ID
       parameters:
-      - description: Categories ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: Categories berhasil dihapus
-          schema:
-            type: string
-        "400":
-          description: Invalid Categories ID
-          schema:
-            type: string
-      summary: Delete Categories by ID
-    get:
-      description: Mengambil data categories berdasarkan ID
-      parameters:
-      - description: Categories ID
+      - description: Product ID
         in: path
         name: id
         required: true
@@ -78,38 +115,81 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Categories'
+            additionalProperties:
+              type: string
+            type: object
         "400":
-          description: Invalid Categories ID
+          description: Invalid product ID
+          schema:
+            type: string
+        "500":
+          description: Failed to delete product
+          schema:
+            type: string
+      summary: Delete Product by ID
+    get:
+      consumes:
+      - application/json
+      description: Mengambil data produk berdasarkan ID. Terdapat opsi untuk mendapatkan
+        detail kategori produk
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: false
+        description: Tampilkan Detail Kategori Produk
+        in: query
+        name: details
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Invalid product ID
           schema:
             type: string
         "404":
-          description: Categories tidak ditemukan
+          description: Product not found
           schema:
             type: string
-      summary: Get Categories by ID
+      summary: Get Product by ID
     put:
-      description: Memperbarui data categories berdasarkan ID
+      consumes:
+      - application/json
+      description: 'Memperbarui data produk berdasarkan ID, data yang dapat diubah:
+        { category_id, name, price, stock }'
       parameters:
-      - description: Categories ID
+      - description: Product ID
         in: path
         name: id
         required: true
         type: integer
-      - description: Updated Categories Data
+      - description: Updated Product Data
         in: body
-        name: categories
+        name: product
         required: true
         schema:
-          $ref: '#/definitions/models.Categories'
+          $ref: '#/definitions/models.Product'
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Categories'
+            $ref: '#/definitions/models.Product'
         "400":
-          description: Invalid request
+          description: Invalid request body
           schema:
             type: string
-      summary: Update Categories by ID
+        "500":
+          description: Failed to update product
+          schema:
+            type: string
+      summary: Update Product by ID
 swagger: "2.0"

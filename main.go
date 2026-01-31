@@ -2,42 +2,58 @@ package main
 
 import (
 	"fmt"
+	"kasir-api/database"
 	_ "kasir-api/docs"
-	"kasir-api/handler"
-	"kasir-api/models"
+	"kasir-api/handlers"
+	"kasir-api/repositories"
+	"kasir-api/services"
 	"net/http"
+	"os"
 	"strings"
 
+	"github.com/spf13/viper"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+type Config struct {
+	Port   string `mapstructure:"PORT"`
+	DBConn string `mapstructure:"DB_CONN"`
+}
+
 func main() {
 	// @title Kasir API
-	// @version 1.0
-	// @description API sederhana untuk manajemen categories di kasir
+	// @version 1.0.1
+	// @description API untuk aplikasi manajemen kasir yang di-update dengan menggunakan database PostgreSQL. Terdapat penambahan endpoint untuk mengelola kategori produk serta relasi antara produk dan kategori.
 
-	var categories = models.DataCategories
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-	http.HandleFunc("/api/categories/", func(w http.ResponseWriter, r *http.Request) {
+	if _, err := os.Stat(".env"); err == nil {
+		viper.SetConfigFile(".env")
+		_ = viper.ReadInConfig()
+	}
 
-		switch r.Method {
-		case "GET":
-			idStr := strings.TrimPrefix(r.URL.Path, "/api/categories/")
-			if idStr == "" {
-				handler.GetAllCategories(w, categories)
-			} else {
-				handler.GetCategoriesByID(w, idStr, categories)
-			}
-		case "POST":
-			handler.PostCategories(w, r, &categories)
-		case "PUT":
-			handler.UpdateCategories(w, r, &categories)
-		case "DELETE":
-			handler.DeleteCategories(w, r, &categories)
-		default:
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		}
-	})
+	config := Config{
+		Port:   viper.GetString("PORT"),
+		DBConn: viper.GetString("DB_CONN"),
+	}
+
+	db, err := database.InitDB(config.DBConn)
+	if err != nil {
+		fmt.Println("Gagal koneksi ke database:", err.Error())
+		return
+	}
+
+	defer db.Close()
+
+	// var categories = models.DataCategories
+	productRepo := repositories.NewProductRepository(db)
+	productService := services.NewProductService(productRepo)
+	productHandler := handlers.NewProductHandler(productService)
+
+	http.HandleFunc("/api/kategori", productHandler.GetCategories)
+	http.HandleFunc("/api/produk", productHandler.HandleProducts)
+	http.HandleFunc("/api/produk/", productHandler.HandleProductByID)
 
 	http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 
@@ -53,7 +69,10 @@ func main() {
 	fmt.Println("Server running di localhost:8080")
 
 	// Jalankan server di port 8080
-	err := http.ListenAndServe(":8080", nil)
+	addr := "0.0.0.0:" + config.Port
+	fmt.Println("Server running at", addr)
+
+	err = http.ListenAndServe(addr, nil)
 
 	// Tangani error jika server gagal dijalankan
 	if err != nil {
