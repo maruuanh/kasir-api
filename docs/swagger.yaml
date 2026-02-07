@@ -6,6 +6,20 @@ definitions:
       name:
         type: string
     type: object
+  models.CheckoutItem:
+    properties:
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+    type: object
+  models.CheckoutRequest:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/models.CheckoutItem'
+        type: array
+    type: object
   models.Product:
     properties:
       category_id:
@@ -21,6 +35,48 @@ definitions:
       stock:
         type: integer
     type: object
+  models.Report:
+    properties:
+      produk_terlaris:
+        properties:
+          nama:
+            type: string
+          qty_terjual:
+            type: integer
+        type: object
+      total_revenue:
+        type: number
+      total_transaksi:
+        type: integer
+    type: object
+  models.Transaction:
+    properties:
+      created_at:
+        type: string
+      details:
+        items:
+          $ref: '#/definitions/models.TransactionDetail'
+        type: array
+      id:
+        type: integer
+      total_amount:
+        type: integer
+    type: object
+  models.TransactionDetail:
+    properties:
+      id:
+        type: integer
+      product_id:
+        type: integer
+      product_name:
+        type: string
+      quantity:
+        type: integer
+      subtotal:
+        type: integer
+      transaction_id:
+        type: integer
+    type: object
 info:
   contact: {}
   description: API untuk aplikasi manajemen kasir yang di-update dengan menggunakan
@@ -29,6 +85,37 @@ info:
   title: Kasir API
   version: 1.0.1
 paths:
+  /api/checkout:
+    post:
+      consumes:
+      - application/json
+      description: 'Melakukan checkout barang: format data yang harus diisi { items:
+        [ { product_id, quantity } ]}'
+      parameters:
+      - description: New Checkout Data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.CheckoutRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Transaction'
+        "400":
+          description: Invalid request body
+          schema:
+            type: string
+        "500":
+          description: Failed to create checkout
+          schema:
+            type: string
+      summary: Checkout Product
+      tags:
+      - checkout
   /api/kategori:
     get:
       consumes:
@@ -48,6 +135,9 @@ paths:
           schema:
             type: string
       summary: Get All Categories
+      tags:
+      - category
+      - produk
   /api/produk:
     get:
       consumes:
@@ -55,11 +145,14 @@ paths:
       description: Mengambil semua data produk. Terdapat opsi untuk mendapatkan detail
         kategori produk
       parameters:
-      - default: false
-        description: Tampilkan Detail Kategori Produk
+      - description: Tampilkan Detail Kategori Produk
         in: query
         name: details
         type: boolean
+      - description: Tampilkan Detail Kategori Produk Berdasarkan Pencarian Nama
+        in: query
+        name: name
+        type: string
       produces:
       - application/json
       responses:
@@ -74,6 +167,8 @@ paths:
           schema:
             type: string
       summary: Get All Products
+      tags:
+      - produk
     post:
       consumes:
       - application/json
@@ -102,6 +197,8 @@ paths:
           schema:
             type: string
       summary: Create New Product
+      tags:
+      - produk
   /api/produk/{id}:
     delete:
       description: Menghapus data produk berdasarkan ID
@@ -127,6 +224,8 @@ paths:
           schema:
             type: string
       summary: Delete Product by ID
+      tags:
+      - produk
     get:
       consumes:
       - application/json
@@ -159,6 +258,8 @@ paths:
           schema:
             type: string
       summary: Get Product by ID
+      tags:
+      - produk
     put:
       consumes:
       - application/json
@@ -192,4 +293,60 @@ paths:
           schema:
             type: string
       summary: Update Product by ID
+      tags:
+      - produk
+  /api/report:
+    get:
+      consumes:
+      - application/json
+      description: Mengambil laporan data transaksi penjualan barang berdasarkan tanggal
+        yang dipilih
+      parameters:
+      - description: 'Tanggal awal (Format: YYYY-MM-DD)'
+        example: "2026-01-01"
+        in: query
+        name: start_date
+        type: string
+      - description: 'Tanggal akhir (Format: YYYY-MM-DD)'
+        example: "2026-02-01"
+        in: query
+        name: end_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Report'
+            type: array
+        "500":
+          description: Failed to get report
+          schema:
+            type: string
+      summary: Get Transaction Report By Selected Date
+      tags:
+      - report
+  /api/report/hari-ini:
+    get:
+      consumes:
+      - application/json
+      description: Mengambil laporan data transaksi penjualan barang khusus hari ini
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Report'
+            type: array
+        "500":
+          description: Failed to get report
+          schema:
+            type: string
+      summary: Get Today's Transaction Report
+      tags:
+      - report
 swagger: "2.0"

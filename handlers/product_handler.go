@@ -20,7 +20,9 @@ func NewProductHandler(service *services.ProductService) *ProductHandler {
 // GET /api/kategori
 // @Summary      Get All Categories
 // @Description  Mengambil semua data kategori produk (Challange (Optional))
+// @Tags         category
 // @Accept       json
+// @Tags         produk
 // @Produce      json
 // @Success      200  {array}   models.Categories
 // @Failure      500  {string}  string "Failed to get categories"
@@ -39,8 +41,10 @@ func (h *ProductHandler) GetCategories(w http.ResponseWriter, r *http.Request) {
 // @Summary      Get All Products
 // @Description  Mengambil semua data produk. Terdapat opsi untuk mendapatkan detail kategori produk
 // @Accept       json
+// @Tags         produk
 // @Produce      json
-// @Param        details  query     bool  false  "Tampilkan Detail Kategori Produk" default(false)
+// @Param        details  query     bool  false  "Tampilkan Detail Kategori Produk"
+// @Param        name  	query     string false  "Tampilkan Detail Kategori Produk Berdasarkan Pencarian Nama"
 // @Success      200      {array}   models.Product
 // @Failure      500      {string}  string "Failed to get products"
 // @Router       /api/produk [get]
@@ -62,10 +66,11 @@ func (h *ProductHandler) HandleProducts(w http.ResponseWriter, r *http.Request) 
 }
 
 // GET /api/produk/{id}
-// GetByID godoc
+// GetByID
 // @Summary      Get Product by ID
 // @Description  Mengambil data produk berdasarkan ID. Terdapat opsi untuk mendapatkan detail kategori produk
 // @Accept       json
+// @Tags         produk
 // @Produce      json
 // @Param        id       path      int   true   "Product ID"
 // @Param        details  query     bool  false  "Tampilkan Detail Kategori Produk" default(false)
@@ -96,23 +101,13 @@ func (h *ProductHandler) GetAll(w http.ResponseWriter, r *http.Request, details 
 	var products []models.Product
 	var err error
 
+	name := r.URL.Query().Get("name")
 	if details {
-		products, err = h.service.GetAllDetails()
+		products, err = h.service.GetAllDetails(name)
 	} else {
-		products, err = h.service.GetAll()
+		products, err = h.service.GetAll(name)
 	}
 
-	if err != nil {
-		http.Error(w, "Failed to get products", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(products)
-}
-
-func (h *ProductHandler) GetDetails(w http.ResponseWriter, r *http.Request) {
-	products, err := h.service.GetAllDetails()
 	if err != nil {
 		http.Error(w, "Failed to get products", http.StatusInternalServerError)
 		return
@@ -126,6 +121,7 @@ func (h *ProductHandler) GetDetails(w http.ResponseWriter, r *http.Request) {
 // @Summary Create New Product
 // @Description Menambahkan data produk baru, data yang perlu diisi: { category_id, name, price, stock }
 // @Accept json
+// @Tags   produk
 // @Produce json
 // @Param product body models.Product true "New Product Data"
 // @Success 201 {object} models.Product
@@ -199,6 +195,7 @@ func (h *ProductHandler) GetDetailsByID(w http.ResponseWriter, r *http.Request) 
 // @Summary Update Product by ID
 // @Description Memperbarui data produk berdasarkan ID, data yang dapat diubah: { category_id, name, price, stock }
 // @Accept json
+// @Tags   produk
 // @Produce json
 // @Param id path int true "Product ID"
 // @Param product body models.Product true "Updated Product Data"
@@ -239,6 +236,7 @@ func (h *ProductHandler) Update(w http.ResponseWriter, r *http.Request) {
 // @Summary Delete Product by ID
 // @Description Menghapus data produk berdasarkan ID
 // @Param id path int true "Product ID"
+// @Tags   produk
 // @Success 200 {object} map[string]string
 // @Failure 400 {string} string "Invalid product ID"
 // @Failure 500 {string} string "Failed to delete product"

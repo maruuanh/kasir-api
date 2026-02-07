@@ -15,6 +15,52 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/checkout": {
+            "post": {
+                "description": "Melakukan checkout barang: format data yang harus diisi { items: [ { product_id, quantity } ]}",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "checkout"
+                ],
+                "summary": "Checkout Product",
+                "parameters": [
+                    {
+                        "description": "New Checkout Data",
+                        "name": "product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CheckoutRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Transaction"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to create checkout",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/kategori": {
             "get": {
                 "description": "Mengambil semua data kategori produk (Challange (Optional))",
@@ -23,6 +69,10 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "category",
+                    "produk"
                 ],
                 "summary": "Get All Categories",
                 "responses": {
@@ -53,13 +103,21 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "produk"
+                ],
                 "summary": "Get All Products",
                 "parameters": [
                     {
                         "type": "boolean",
-                        "default": false,
                         "description": "Tampilkan Detail Kategori Produk",
                         "name": "details",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Tampilkan Detail Kategori Produk Berdasarkan Pencarian Nama",
+                        "name": "name",
                         "in": "query"
                     }
                 ],
@@ -88,6 +146,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "produk"
                 ],
                 "summary": "Create New Product",
                 "parameters": [
@@ -131,6 +192,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "produk"
                 ],
                 "summary": "Get Product by ID",
                 "parameters": [
@@ -178,6 +242,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "produk"
+                ],
                 "summary": "Update Product by ID",
                 "parameters": [
                     {
@@ -220,6 +287,9 @@ const docTemplate = `{
             },
             "delete": {
                 "description": "Menghapus data produk berdasarkan ID",
+                "tags": [
+                    "produk"
+                ],
                 "summary": "Delete Product by ID",
                 "parameters": [
                     {
@@ -254,6 +324,86 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/report": {
+            "get": {
+                "description": "Mengambil laporan data transaksi penjualan barang berdasarkan tanggal yang dipilih",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "report"
+                ],
+                "summary": "Get Transaction Report By Selected Date",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "2026-01-01",
+                        "description": "Tanggal awal (Format: YYYY-MM-DD)",
+                        "name": "start_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "2026-02-01",
+                        "description": "Tanggal akhir (Format: YYYY-MM-DD)",
+                        "name": "end_date",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Report"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to get report",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/report/hari-ini": {
+            "get": {
+                "description": "Mengambil laporan data transaksi penjualan barang khusus hari ini",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "report"
+                ],
+                "summary": "Get Today's Transaction Report",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Report"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to get report",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -265,6 +415,28 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "models.CheckoutItem": {
+            "type": "object",
+            "properties": {
+                "product_id": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.CheckoutRequest": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CheckoutItem"
+                    }
                 }
             }
         },
@@ -287,6 +459,71 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "stock": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Report": {
+            "type": "object",
+            "properties": {
+                "produk_terlaris": {
+                    "type": "object",
+                    "properties": {
+                        "nama": {
+                            "type": "string"
+                        },
+                        "qty_terjual": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "total_revenue": {
+                    "type": "number"
+                },
+                "total_transaksi": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Transaction": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TransactionDetail"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "total_amount": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TransactionDetail": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "product_name": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "subtotal": {
+                    "type": "integer"
+                },
+                "transaction_id": {
                     "type": "integer"
                 }
             }
