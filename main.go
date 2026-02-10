@@ -64,11 +64,11 @@ func main() {
 	reportService := services.NewReportService(reportRepo)
 	reportHandler := handlers.NewReportHandler(reportService)
 
-	http.HandleFunc("/api/kategori", productHandler.GetCategories)
-	http.HandleFunc("/api/produk", productHandler.HandleProducts)
-	http.HandleFunc("/api/produk/", apiKeyMiddleware(productHandler.HandleProductByID))
-	http.HandleFunc("/api/report/", reportHandler.HandleReport)
-	http.HandleFunc("/api/checkout", apiKeyMiddleware(transactionHandler.HandleCheckout))
+	http.HandleFunc("/api/kategori", middlewares.CORS(middlewares.Logger(productHandler.GetCategories)))
+	http.HandleFunc("/api/produk", middlewares.CORS(middlewares.Logger(productHandler.HandleProducts)))
+	http.HandleFunc("/api/produk/", middlewares.CORS(middlewares.Logger(apiKeyMiddleware(productHandler.HandleProductByID))))
+	http.HandleFunc("/api/report/", middlewares.CORS(middlewares.Logger(reportHandler.HandleReport)))
+	http.HandleFunc("/api/checkout", middlewares.CORS(middlewares.Logger(apiKeyMiddleware(transactionHandler.HandleCheckout))))
 
 	http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 
