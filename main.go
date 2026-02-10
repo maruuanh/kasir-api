@@ -5,6 +5,7 @@ import (
 	"kasir-api/database"
 	_ "kasir-api/docs"
 	"kasir-api/handlers"
+	"kasir-api/middlewares"
 	"kasir-api/repositories"
 	"kasir-api/services"
 	"net/http"
@@ -18,6 +19,7 @@ import (
 type Config struct {
 	Port   string `mapstructure:"PORT"`
 	DBConn string `mapstructure:"DB_CONN"`
+	APIKey string `mapstructure:"API_KEY"`
 }
 
 func main() {
@@ -36,6 +38,7 @@ func main() {
 	config := Config{
 		Port:   viper.GetString("PORT"),
 		DBConn: viper.GetString("DB_CONN"),
+		APIKey: viper.GetString("API_KEY"),
 	}
 
 	db, err := database.InitDB(config.DBConn)
@@ -45,6 +48,8 @@ func main() {
 	}
 
 	defer db.Close()
+
+	apiKeyMiddleware := middlewares.APIkey(config.APIKey)
 
 	// var categories = models.DataCategories
 	productRepo := repositories.NewProductRepository(db)
@@ -59,11 +64,11 @@ func main() {
 	reportService := services.NewReportService(reportRepo)
 	reportHandler := handlers.NewReportHandler(reportService)
 
-	http.HandleFunc("/api/checkout", transactionHandler.HandleCheckout)
 	http.HandleFunc("/api/kategori", productHandler.GetCategories)
 	http.HandleFunc("/api/produk", productHandler.HandleProducts)
-	http.HandleFunc("/api/produk/", productHandler.HandleProductByID)
+	http.HandleFunc("/api/produk/", apiKeyMiddleware(productHandler.HandleProductByID))
 	http.HandleFunc("/api/report/", reportHandler.HandleReport)
+	http.HandleFunc("/api/checkout", apiKeyMiddleware(transactionHandler.HandleCheckout))
 
 	http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 
